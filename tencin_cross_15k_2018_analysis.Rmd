@@ -1,0 +1,117 @@
+---
+title: "Tencin_2018_15km_analysis"
+author: "stewarta"
+date: "14 May 2018"
+output: md_document
+---
+
+Hi everyone!
+
+I am continuing my journey to learn awk and I finally managed to process an entire file today so let's analyse my 2018 Tencin trail race. It was my first trail race of the season, and it kicks off the "challenge intercommunal du grésivaudan", which is a set of 11 races in this region called the Grésivaudan which is a valley in between the two mountains of Belledonne and Chartreuse in the Alps. Tencin was my favorite race this year, it was so much fun! It was also one of the hardest ones because the climb is extremely steep (for me) and the descent can be a little bit technical. I also don't have enough ab muscles so I feel all my organs kick each other in my abdomen and I really don't like that^^. The weather was beautiful, it was a small event so it was a very chill race. The views were wonderful, and we were running around very rural areas, so I got distracted observing a baby sheep yelling for his mother, there were lots of farms everywhere. But the best part is the people cheering you on when you cross villages and especially at the finish line, they really motivate you to try as hard as you can on the last few hundred meters, even when you are among the last people to cross it, they make you feel just as special as the first person to cross it. Another best part was the food: I am litterally obsessed with food since I began running, I feel like that's the only thing I think about, and at aid stations they had my favorite: "pâte de fruit"! I absolutely loved that event and will be returning for sure! Let's jump in the data analysis part now:
+
+# First look at the data
+
+Let's have a look at the data and pull up all the columns of the dataframe:
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+library(readODS)
+library(chron)
+library(sqldf)
+library(ggplot2)
+tencin_tbl <- read.ods("tencin_data_2018.ods", 1)
+colnames(tencin_tbl) <- tencin_tbl[1,]
+tencin_tbl <- data.frame(tencin_tbl[2:nrow(tencin_tbl),1:ncol(tencin_tbl)])
+for(i in 1:nrow(tencin_tbl)){
+  if(as.numeric(tencin_tbl$DateNaissance[i]) > 18){
+    tencin_tbl$DateNaissance[i] <- paste("19", tencin_tbl$DateNaissance[i], sep="")
+  }else{
+    tencin_tbl$DateNaissance[i] <- paste("200", tencin_tbl$DateNaissance[i], sep="")
+    }
+}
+colnames(tencin_tbl)
+```
+
+There are `r nrow(tencin_tbl)` total people who ran the race, everyone finished. There were `r length(tencin_tbl$Cat[ which(substr(tencin_tbl$Cat, 3, 3)=='F')])` women  constituting `r length(tencin_tbl$Cat[ which(substr(tencin_tbl$Cat, 3, 3)=='F')])/nrow(tencin_tbl) *100` % of all runners and `r length(tencin_tbl$Cat[ which(substr(tencin_tbl$Cat, 3, 3)=='M')])` men making up the remaining `r length(tencin_tbl$Cat[ which(substr(tencin_tbl$Cat, 3, 3)=='M')])/nrow(tencin_tbl) *100` %. The huge women/men number difference is not unusual in trail races yet.
+
+# Plotting the number of participants per category for men and women
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+ggplot(sqldf("select Cat from tencin_tbl"), aes(x=Cat, fill=substr(tencin_tbl$Cat, 3, 3))) + geom_bar() + ggtitle("Men and women participants per category") + scale_fill_discrete(name="Category")
+```
+
+As per usual, the biggest category is the senior category in men and women, followed by veteran 1 then veteran 2. There are usually very few junior and espoir runners. Another thing I've noticed that is also showed here is that in the veteran categories, men tend to run more when they are older so we have veteran 3-5 in men but sometimes not at all in women.
+
+# Age of runners
+
+We can see the age of runners more precisely than for categories in this next graph:
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+hist(as.numeric(tencin_tbl$DateNaissance), main="Birth dates of runners", xlab="Birth year")
+```
+
+This plot shows that most runners were born between 1970 and 1982. The youngest runner was from 2000! It makes me feel so old that people from 2000 are turning eighteen this year...
+
+Let's pull up a statistical summary of this data using the function "summary()" from base R: 
+
+  - overall: `r summary(as.numeric(tencin_tbl$DateNaissance))`
+  
+  - for men: `r summary(as.numeric(tencin_tbl[ which(tencin_tbl$Genre =='M'),]$DateNaissance))`
+  
+  - for women `r summary(as.numeric(tencin_tbl[ which(tencin_tbl$Genre =='F'),]$DateNaissance))`
+  
+According to these summaries, women who race tend to be younger on average (1981 for women versus 1975 for men and the oldest man born in 1944 versus 1962 for women). That sounds a little strange to me, why don't older women still race, or start racing, especially in local races like this one? Maybe the trend will disappear in a few years, I hope so!
+
+# Finnish times according to place at the finish line
+
+Now let's plot the finish times according to their place:
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+plot(as.POSIXct(strptime(tencin_tbl$Temps, format="%H:%M:%S")), tencin_tbl$Classement_scratch, main="times according to place", xlab = "time of arrival", ylab="place")
+```
+
+There are two different parts in this graph: the denser sigmoid is the men's one and the less dense one that is just slightly sigmoid is the women's one. The men's plot is pretty standard from other runners data I've analyzed so far with spaced out runners at the front and at the back end and a very dense exponential phase in the middle. The women's data today, since there were so few of us looks a bit more linear, maybe even a little logarithmic at the end. There is also a gap around 2:15-2:20 (we were having way too much fun back there to hurry up...I was filming and taking pictures, and met two runners with their dogs and we had a nice chat about cani-cross).
+
+# Correlation between bib number and place
+
+Now this is just silly for this kind of race, but is there a correlation between bib number and place?
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+plot(as.POSIXct(strptime(tencin_tbl$Temps, format="%H:%M:%S")), as.numeric(substr(tencin_tbl$Dossard, 3, nchar(tencin_tbl$Dossard))), main="times according to place", xlab = "time of arrival", ylab="Bib number")
+```
+
+As we can see there really is no correlation for this race. If you're curious why I did this it's because in some races it is actually relevant, you bib number indicates which start group you are in and that depends on your estimated arrival time.
+
+That's all for today! I'm doing quite a few trail and road races this year, and maybe a couple new sports so you can expect more of those analyses, I'll try to keep them a little different each time and learn different ways to look at this kind of data, so make sure you come back for that. If you have any remarks, or want me to look at specific sets of data, let me know using my social media links! I also post pictures of races and training there. See you next time!
+
+As usual the code is below:
+
+```{r, message=FALSE, warning=FALSE, eval=FALSE}
+#load libraries
+library(readODS)
+library(chron)
+library(sqldf)
+library(ggplot2)
+#read data and set column names
+tencin_tbl <- read.ods("tencin_data_2018.ods", 1)
+colnames(tencin_tbl) <- tencin_tbl[1,]
+tencin_tbl <- data.frame(tencin_tbl[2:nrow(tencin_tbl),1:ncol(tencin_tbl)])
+#sort out the birth dates in case they are in wrong format
+for(i in 1:nrow(tencin_tbl)){
+  if(as.numeric(tencin_tbl$DateNaissance[i]) > 18){
+    tencin_tbl$DateNaissance[i] <- paste("19", tencin_tbl$DateNaissance[i], sep="")
+  }else{
+    tencin_tbl$DateNaissance[i] <- paste("200", tencin_tbl$DateNaissance[i], sep="")
+    }
+}
+#display column names:
+colnames(tencin_tbl)
+#plot the categories
+ggplot(sqldf("select Cat from tencin_tbl"), aes(x=Cat, fill=substr(tencin_tbl$Cat, 3, 3))) + geom_bar() + ggtitle("Men and women participants per category") + scale_fill_discrete(name="Category")
+#plot birth years
+hist(as.numeric(tencin_tbl$DateNaissance), main="Birth dates of runners", xlab="Birth year")
+#plot times vs place
+plot(as.POSIXct(strptime(tencin_tbl$Temps, format="%H:%M:%S")), tencin_tbl$Classement_scratch, main="times according to place", xlab = "time of arrival", ylab="place")
+#plot bib number vs place
+plot(as.POSIXct(strptime(tencin_tbl$Temps, format="%H:%M:%S")), as.numeric(substr(tencin_tbl$Dossard, 3, nchar(tencin_tbl$Dossard))), main="times according to place", xlab = "time of arrival", ylab="Bib number")
+```
+
