@@ -1,0 +1,112 @@
+---
+title: "running races and waste"
+author: "stewarta"
+date: "27 May 2018"
+output: html_document
+---
+
+Hi everyone!
+
+I am tackling a new topic today, which is: waste generated during races. I'll tell you why this is coming up now. I started the racing season with a road 10km called Asparun which was a relatively small race, 354 runners on the 10k plus probably as many on the 5k, which is more people than I usually see at my small local races, and I saw so many people just throwing their water goblets not IN the trash but sometimes 500 meters away, and it shocked me. When you are an elite, fine, you don't have time. But as an age-grouper, what's the point? But then I ran in a bigger event which was [my first half marathon](https://sciathlon.github.io/post/my_first_half_marathon). And there, because there were so many people, the goblets were everywhere on the ground. Gel wrapers were everywhere as well. I was even more shocked. Afterwards, I decided I didn't want to use goblets any more and brought my soft flask to refill at aid stations at my next race, a [15k trail](https://sciathlon.github.io/post/tencin_cross_15k_2018_analysis). It was completely manageable and I don't understand why everyone doesn't use them.
+
+soft flasks to carry arround from Decathlon: ![Alt](soft_flask.jpg "soft flasks")
+
+After that race, I did my second half marathon, the biggest event I've been to, the Annecy half marathon. It was insane, there were over 2000 of us running it, and it was hell to try to get water at aid stations, not to mention most times there wasn't any food left when I came along... the piles of goblets, gel wrapers etc. was humongous, honestly it was more than I could possibly imagine. This is not ok for me. Apparently I'm not the only one who thinks that, see for yourself on these couple of examples who all mention the need to be more ecological:
+
+ - https://www.change.org/p/waste-less-new-york-city-marathon
+ 
+ - http://www.schneiderelectricparismarathon.com/en/a-marathon-with-values/our-waste-management
+ 
+ - http://www.zerowastesg.com/2011/07/21/waste-generated-from-marathons/
+ 
+There are many more websites of races that try to handle all this trash better. But I think recycling is not enough. It also costs money and energy, and nearly nothing is ever 100% recycled. 
+
+# Cost comparison for recyclable paper cups vs disposable plastic cups
+
+Let's do some quick calculations with inline R (the code will be [on my github](https://github.com/Sciathlon)):
+
+  - plastic cups cost  64.5 euros for 3000 which makes it `r 64.5/3000` each according to [this link](https://www.cdiscount.com/maison/art-de-la-table/gobelets-plastique-pp-transparent-20-23cl-x3000/f-1179036-adn3158849371144.html?idOffre=137396747#mpos=2|mp).
+  
+  - paper cups that you can recycle cost 2,37 euros for 50 so `r 2.37/50` euros each according to [this link](https://www.cdiscount.com/maison/r-gobelet+en+carton.html#_his_).
+  
+  
+A paper cup weighs about 4 grams and a plastic cup weighs about 3 grams according to [this link](http://www.segifrance.com/madeinfrance-carton-de-2-700-gobelets-6-oz-blancs-19-5-cl.html).
+
+I found [this page](https://www.citeo.com/sites/default/files/2017-10/Tarif2018_Citeo_Emballages_sept2017_0.PDF) in french that states that it will charge you 0.16 euros per kg of paper. It probably doesn't include transport in the price but it gives us an idea.
+  
+So recyclable paper cups cost about 2-3 times more than plastic cups. Does it make such a difference for 2 cents? let's check for different sizes of races on the basis that one cup per runner will be there every 5k minimum depending on the heat expected, and including at the end:
+
+|distance| paper/plastic | 300 runners | 700 runners | 10000 runners | number of cups| total kg to be recycled | price for recycling(euros) |
+|--------|---------------|-------------|-------------|---------------|---------------|-------------------------|---------------------|
+| 5k | plastic |`r 64.5/3000 * 300`|`r 64.5/3000 * 700`|`r 64.5/3000 * 10000`| 300 - 10000 | / | / |
+| 5k | paper |`r 2.37/50 * 300`|`r 2.37/50 * 700`|`r 2.37/50 * 10000`| / |`r (300 * 4) /1000` - `r (10000*4)/1000` |`r 0.16*(300 * 4) /1000` - `r 0.16*(10000*4)/1000`|
+| 10k | plastic |`r 64.5/3000 * 300 * 2`|`r 64.5/3000 * 700 * 2`|`r 64.5/3000 * 10000 * 2`|`r 300*2` - `r 10000*2`| / | / |
+| 10k | paper |`r 2.37/50 * 300 * 2`|`r 2.37/50 * 700 * 2`|`r 2.37/50 * 10000 * 2`| / |`r (300*4*2)/1000` - `r (10000*4*2)/1000` |`r 0.16*(300 * 4* 2) /1000` - `r 0.16*(10000*4* 2)/1000`|
+| half marathon | plastic |`r 64.5/3000 * 300 * 4`|`r 64.5/3000 * 700 * 4`|`r 64.5/3000 * 10000 * 4`|`r 300*4` - `r 10000*4`| / | / |
+| half marathon | paper |`r 2.37/50 * 300 * 4`|`r 2.37/50 * 700 * 4`|`r 2.37/50 * 10000 * 4`| / |`r (300*4*4)/1000` - `r (10000*4*4)/1000` |`r 0.16*(300 * 4* 4) /1000` - `r 0.16*(10000*4* 4)/1000`|
+| marathon | plastic |`r 64.5/3000 * 300 * 8`|`r 64.5/3000 * 700 * 8`|`r 64.5/3000 * 10000 * 8`|`r 300*8` - `r 10000*8`| / | / |
+| marathon | paper |`r 2.37/50 * 300 * 8`|`r 2.37/50 * 700 * 8`|`r 2.37/50 * 10000 * 8`| / |`r (300*4*8)/1000` - `r (10000*4*8)/1000`|`r 0.16*(300 * 4*8) /1000` - `r 0.16*(10000*4*8)/1000`|
+ 
+So the difference in price is only a little significant when you have huge numbers of runners for a really big event like the Paris Marathon. So switching to paper cups that you can recycle for most race directors isn't such a big deal. But look at the sheer number of cups that have to be recycled? Financially if we look at the last column of that table, it isn't expensive at all, so it really doesn't make any sense why paper cups are not omnipresent yet.
+
+Actually, I went to a race week end before last which is the trail d'Uriage (utr or uriage trail running) and they had reusable cups  on the 10k trail which will last years. I thought that was much better, because people won't throw those away in the wild. It is an investment but on the long run it'll even save some money. Let's calculate how long that will take:
+
+  - I found  [this link](https://www.vaissellejetable.fr/fr/produit/gobelet-reutilisable-translucide-neutre-33-cl.php) which says that for a pack of 15 it'll cost 4.43 euros so `r 4.43/15` euros each which is `r (4.43/15)/(2.37/50)` times more than for recyclable paper cups. So it'll take this many events to make it be beneficial in terms of money saved. Of course these reusable plastic goblets won't last for ever, but if they are stored properly, I think they can be used for many years, and the benefits will by far outweigh the disadvantages.
+
+The conclusion to this calculation is that you should get a soft flask, I recently got one and it's been amazing for training and racing, (see picture above) it takes very little space, and there are lots of different sizes (on the picture I have the 150 mL and the 500 mL). Decathlon started making them recently and I've been using them all the time since. Otherwize Salomon makes really good ones, my friends tell me.
+
+# Non-recyclable waste generated from paper recycling
+
+```{r, message=FALSE, echo=FALSE, warning=FALSE}
+#loading libraries
+library(knitr)
+library(ggplot2)
+```
+
+I found a dutch website showing what are the rejects from paper recycling you can find with [this link](https://www.ecn.nl/phyllis2/Browse/Standard/ECN-Phyllis#paper).
+
+```{r, message=FALSE, echo=FALSE, warning=FALSE}
+rejectstbl <- read.table("rejects_from_paper_recycling.txt", sep = "\t")
+colnames(rejectstbl) <- c("element","unit", "percent_weigth" ,"percent_dry_weight", "percent_no_ash_wet_weigth", "means_obtention")
+kable(rejectstbl)
+ggplot(rejectstbl, aes(x = element, y = percent_weigth)) + geom_col()
+```
+
+The rejects we observe above in percent of total weigth come from when the "pulp" of the paper was extracted. It is what is left behind that we mostly don't know how to recycle. Most of it is CHO atoms, mostly plastics, glue and ink. Some of it can also be recycled, but not all of it, so even if paper cups are recycled, it's always better not to have any at all. Sulfur reacts will almost all other elements. Alone it is not toxic,  but if burned in air it an create acids which are toxic, so the way it is handled matters.
+
+# General waste stats in Europe
+
+```{r, message=FALSE, echo=FALSE, warning=FALSE}
+waste_dangtbl <- read.csv("env_wasgen_1_Data.csv")
+waste_nondangtbl <- read.csv("env_wasgen_3_Data.csv")
+waste_dangtbl$Value <- gsub(":", "0", waste_dangtbl$Value)
+waste_dangtbl$Value <- as.numeric(gsub("\\.", "", waste_dangtbl$Value))
+waste_nondangtbl$Value <- gsub(":", "0", waste_nondangtbl$Value)
+waste_nondangtbl$Value <- as.numeric(gsub("\\.", "", waste_nondangtbl$Value))
+```
+
+I found more data on [this website](http://ec.europa.eu/eurostat/web/environment/waste/database) about waste in Europe in 2014 which I am going to analyse now. I downloaded a csv file from the website which categorizes different types of waste, and whether it's dangerous for our health. The file I downloaded is in French so that's why the country names are in french, and the legends in one of the graphs might also be difficult to read, but hopefully I will make it easier for you in my comments if you can't read french. Total European Union (composition as is in 2014) dangerous waste is `r waste_dangtbl[ which(waste_dangtbl$WASTE == "Déchets totaux" & waste_dangtbl$GEO == "UE"),]$Value` tonnes. For non-dangerous waste it is `r waste_nondangtbl[ which(waste_nondangtbl$WASTE == "Déchets totaux" & waste_nondangtbl$GEO == "UE"),]$Value`. That is BILLIONS of tonnes. I am first going to compare total dangerous and non-dangerous waste from European countries:
+
+```{r, message=FALSE, echo=FALSE, warning=FALSE}
+ggplot(waste_nondangtbl[ which(waste_nondangtbl$WASTE == "Déchets totaux" & waste_nondangtbl$GEO != "UE"),], aes(x = GEO, y = Value)) + geom_col() + theme(axis.text.x  = element_text(angle=90, vjust=1)) + ggtitle("Dangerous waste in European countries")
+```
+
+Germany, France and the UK are the three countries that produce the most dangerous waste, followed by Sweden, Bulgaria and Italy. My country could definitely afford to be much better at controlling their waste, I hope this number goes down in the next few years, especially after the [Paris agreement](https://unfccc.int/process-and-meetings/the-paris-agreement/the-paris-agreement) was ratified in 2016. 
+
+```{r, message=FALSE, echo=FALSE, warning=FALSE}
+ggplot(waste_nondangtbl[ which(waste_nondangtbl$WASTE == "Déchets totaux" & waste_nondangtbl$GEO != "UE"),], aes(x = GEO, y = Value)) + geom_col() + theme(axis.text.x  = element_text(angle=90, vjust=1)) + ggtitle("Non-dangerous waste in European countries")
+```
+
+Again the same countries produce the most amount of non-dangerous waste. But we also have Poland and Romania join the second tier of most wasteful countries with non-dangerous waste.
+
+I want to look now at the different categories of non-dangerous waste:
+
+```{r, message=FALSE, echo=FALSE, warning=FALSE, fig.width=12}
+ggplot(waste_nondangtbl[ which(waste_nondangtbl$WASTE != "Déchets totaux" & waste_nondangtbl$GEO != "UE"),], aes(x = GEO, y = Value, fill= WASTE)) + geom_col() + theme(axis.text.x  = element_text(angle=90, vjust=1)) + ggtitle("Non-dangerous categories of waste in European countries")
+```
+
+This graph gives us an idea of the different types of waste we produce and the amount per category. Mineral or solidified waste is way ahead in almost every country. Second is both recyclable waste and chemical waste coming from medical use. Then comes waste from our food, which is the one we can really afford to cut down because first of all, no one needs that much meat. Actually, we don't need any meat at all, but a reduction in consumption would already help a lot. If we all used compost as well, that number would go down to pretty much 0. For the medical waste, that is also something researchers in biology and chemistry could do better. There is also the issue that a lot of people, at least in France, are prescribed medication they don't need. We also use medication much more than we really should.
+
+Anyways I hope you've enjoyed this little article on a topic we can all afford to be more active in. I encourage you to look up the "zero waste challenge" that people have started showing on youtube, for example [this one by Michelle Khare](https://www.youtube.com/watch?v=6tgptWcKkgc) and maybe try some of the things that she shows. I have been trying to include some of those things slowly in my every day life and I think I can help reduce my waste little by little and help make a difference. For example in my city they give free composting lessons, and are trying to incorporate more composts in buildings. I hope this has been useful and has inspired you to try it as well, see you next time!
+
+Sciathlete
